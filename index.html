@@ -503,7 +503,8 @@ footer a{color:var(--fg-2);text-decoration:none}
 .pvsel .sm{display:none}
 .iso{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(0,1fr);gap:clamp(28px,4.4vw,60px);align-items:center;margin-top:50px}
 .shot{position:relative;display:block;width:100%;aspect-ratio:2000/2040;padding:0;border:0;border-radius:20px;overflow:hidden;cursor:zoom-in;background:#FFFFFF;box-shadow:0 0 0 1px rgba(0,0,0,0.011),0 60px 120px -50px rgba(0,0,0,0.420),0 30px 90px -40px rgba(17,17,17,0.203);transition:background-color .5s,transform .5s var(--ease),box-shadow .5s var(--ease)}
-.shot.light{background:#f2f2f4}
+.shot.light{background:#f2f2f4;aspect-ratio:2000/2720}
+.iso-steps li[hidden]{display:none}
 .shot:hover{transform:translateY(-3px);box-shadow:0 0 0 1px rgba(17,17,17,0.158),0 70px 120px -50px rgba(0,0,0,0.420),0 34px 100px -40px rgba(17,17,17,0.270)}
 .shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;visibility:hidden;transition:opacity .55s var(--ease),visibility 0s linear .55s}
 .shot img.on{opacity:1;visibility:visible;transition:opacity .55s var(--ease)}
@@ -659,6 +660,7 @@ html.pv-open,html.pvz-open{overflow:hidden}
 .pv-sub{max-width:44rem;margin:0 auto}
 .pv-fig{width:min(100%,max(560px,calc((100vh - 170px) * .98)),1100px);margin:40px auto 0}
 .pv-fig .shot{border-radius:18px}
+@media (min-width:561px){html[data-pvbg="branco"] .pv-fig{width:min(100%,max(480px,calc((100vh - 170px) * .735)),860px)}}
 .pv-fig figcaption{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 18px;margin-top:16px;font:600 15.5px/1.35 var(--sans)}
 .pv-fig figcaption b span{color:var(--fg-3);font-weight:500;white-space:nowrap}
 .pv-fig figcaption small{font:400 12.5px/1.4 var(--mono);letter-spacing:.03em;color:var(--fg-3)}
@@ -1172,9 +1174,9 @@ body{background:transparent;color:var(--fg)}
       <div class="iso" id="iso">
         <button type="button" class="shot" id="iso-shot" data-shot aria-label="Ampliar a imagem inteira">
           <img class="on" data-v="w10-preto" src="img/w10-preto-800.webp" data-orig="img/w10-preto.webp" data-s800="img/w10-preto-800.webp" data-s1200="img/w10-preto-1200.webp" alt="Preview Windows 10 v1.2, fundo preto (visual padrão): instalador, tela de bloqueio, tela de entrar, área de trabalho, Menu Iniciar e manual das regras" width="1373" height="1400" decoding="async" loading="lazy" draggable="false">
-          <img data-v="w10-branco" data-orig="img/w10-branco.webp" data-s800="img/w10-branco-800.webp" data-s1200="img/w10-branco-1200.webp" alt="Preview Windows 10 v1.2, fundo branco: instalador, tela de bloqueio, tela de entrar, área de trabalho, Menu Iniciar e manual das regras" width="2000" height="2040" decoding="async" loading="lazy" draggable="false">
+          <img data-v="w10-branco" data-orig="img/w10-branco.webp" data-s800="img/w10-branco-800.webp" data-s1200="img/w10-branco-1200.webp" alt="Preview Windows 10 v1.2, fundo branco: área de trabalho e Menu Iniciar" width="2000" height="2720" decoding="async" loading="lazy" draggable="false">
           <img data-v="w11-preto" data-orig="img/w11-preto.webp" data-s800="img/w11-preto-800.webp" data-s1200="img/w11-preto-1200.webp" alt="Preview Windows 11, fundo preto (visual padrão): instalador, tela de bloqueio, tela de entrar, área de trabalho, Menu Iniciar e manual das regras" width="1373" height="1400" decoding="async" loading="lazy" draggable="false">
-          <img data-v="w11-branco" data-orig="img/w11-branco.webp" data-s800="img/w11-branco-800.webp" data-s1200="img/w11-branco-1200.webp" alt="Preview Windows 11, fundo branco: instalador, tela de bloqueio, tela de entrar, área de trabalho, Menu Iniciar e manual das regras" width="2000" height="2040" decoding="async" loading="lazy" draggable="false">
+          <img data-v="w11-branco" data-orig="img/w11-branco.webp" data-s800="img/w11-branco-800.webp" data-s1200="img/w11-branco-1200.webp" alt="Preview Windows 11, fundo branco: área de trabalho e Menu Iniciar" width="2000" height="2720" decoding="async" loading="lazy" draggable="false">
           <i class="shot-hl" aria-hidden="true"></i>
         </button>
         <div class="iso-side">
@@ -2515,7 +2517,12 @@ window.D1 = {
   var SCREENS = ['Instalador', 'Tela de bloqueio', 'Tela de entrar', 'Área de trabalho', 'Menu Iniciar', 'Manual das regras'];
   /* posição de cada tela dentro da imagem inteira (frações, iguais nas 4 imagens) */
   var COLS = [0.027, 0.509], ROWS = [0.1066, 0.3997, 0.6928], PW = 0.4635, PH = 0.2555;
-  function rect(i) { return { x: COLS[i % 2], y: ROWS[(i / 2) | 0], w: PW, h: PH }; }
+  /* fundo branco: a imagem só tem as 2 telas brancas (Área de trabalho e Menu Iniciar), uma sobre a outra (2000 x 2720) */
+  var WROWS = [0.1294, 0.5596], WX = 0.032, WW = 0.936, WH = 0.3871;
+  function rect(i) {
+    if (state.bg === 'branco') return { x: WX, y: WROWS[i === 4 ? 1 : 0], w: WW, h: WH };
+    return { x: COLS[i % 2], y: ROWS[(i / 2) | 0], w: PW, h: PH };
+  }
   var state = { ver: 'w10', bg: 'preto' };
   function key() { return state.ver + '-' + state.bg; }
   /* cada imagem tem 3 tamanhos: 800 px, 1200 px e a original (inteira, sem perda).
@@ -2579,9 +2586,19 @@ window.D1 = {
     if (on.decode && !on.complete) on.decode().then(go, go); else go();
   }
   function sync() {
-    var k = key(), v = VARS[k];
+    var k = key(), v = VARS[k], white = state.bg === 'branco';
+    root.setAttribute('data-pvbg', state.bg);
     showOn(inlineShot);
     if (tabReady) showOn(tabShot);
+    /* fundo branco mostra só as telas brancas: Área de trabalho (04) e Menu Iniciar (05), numeradas 01 e 02 */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-steps] li'), function (li) {
+      var btn = li.querySelector('button[data-s]');
+      if (!btn) return;
+      var s = +btn.dataset.s, b = btn.querySelector('b');
+      li.hidden = white && s !== 4 && s !== 5;
+      if (b) b.textContent = '0' + (white ? s - 3 : s);
+    });
+    if (white) hl(inlineShot, -1);
     Array.prototype.forEach.call(document.querySelectorAll('[data-pvsel] button'), function (b) {
       var on = b.dataset.ver ? b.dataset.ver === state.ver : b.dataset.bg === state.bg;
       b.classList.toggle('on', on);
